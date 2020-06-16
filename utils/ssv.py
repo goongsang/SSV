@@ -314,7 +314,7 @@ class Saver():
 
 	def save_model(self, modelname, epoch):
 		torch.save(self.model_list[modelname].state_dict(), 
-					os.path.(self.modeldir,'%s_%08i_%s_checkpoint.pt'%(modelname, epoch, self.opt.model_name)) ) 
+					os.path.join(self.modeldir,'%s_%08i_%s_checkpoint.pt'%(modelname, epoch, self.opt.model_name)) ) 
 	
 	def save_all_models(self,epoch):
 		for modelname in self.model_list.keys():

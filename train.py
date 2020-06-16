@@ -292,7 +292,7 @@ if __name__ == '__main__':
     # ------------------------------------------------------------------------------------------------------------------------------------#
 
     if args.gpus is not None:
-        os.environ['CUDA_VISIBLE_DEVICES']=args.gpus
+        os.environ['CUDA_VISIBLE_DEVICES']=str(args.gpus)
     
     code_size = args.code_size
 

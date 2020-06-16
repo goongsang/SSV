@@ -109,11 +109,32 @@ if __name__ == "__main__":
     
     if args.dataset == '300WLP':
 
-        images = open(args.src_dir + '/images.txt').readlines()
-        for image in images[args.start:10]:
-            cv_orig_im = cv2.imread(os.path.join(args.src_dir, image[:-1]))
+        images_path = args.src_dir + '/images.txt'
+        if not os.path.exists(images_path):
+            print("creating images.txt")
+            images_file = open(images_path, "w")
+            subdirs = [d for d in os.listdir(args.src_dir) if os.path.isdir(args.src_dir+"/"+d)]
+            for sd in subdirs:
+                d = args.src_dir + "/" + sd + "/"
+                files = [sd+"/"+f for f in os.listdir(d) if f.split(".")[-1].lower() in ["jpg", "jpeg", "png"]]
+                for f in files:
+                    images_file.write(f+"\n")
+            images_file.close()
+            
+        images = open(images_path).readlines()
+        nImages = len(images)
+        cwd = os.getcwd()
+        for i, image in enumerate(images[args.start:args.end]):
+            f = os.path.join(args.src_dir, image[:-1])
+            print("(%06d/%06d) %s"%(args.start+i,nImages,f))
+            cv_orig_im = cv2.imread(f)
             pil_im = Image.fromarray(cv2.cvtColor(cv_orig_im, cv2.COLOR_BGR2RGB))
-            bboxes, landmarks = detect_faces(pil_im, min_face_size = 30, in_weights_dir = args.weights_dir)   
+            # bboxes, landmarks = detect_faces(pil_im, min_face_size = 30, in_weights_dir = args.weights_dir) 
+              
+            os.chdir("mtcnn-pytorch")
+            bboxes, landmarks = detect_faces(pil_im, min_face_size = 30)   
+            os.chdir(cwd)
+
             if len(bboxes) < 1:
                 print('no face found')
                 continue
